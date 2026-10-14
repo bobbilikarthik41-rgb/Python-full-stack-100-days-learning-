@@ -1,5 +1,5 @@
 SQL DATE & TIME FUNCTIONS
--CURDATE(): Current date.
+CURDATE(): Current date.
 CURTIME(): Current time.
 NOW(): Current date and time.
 DATE(): Extract date part.
@@ -117,6 +117,7 @@ Output:
 | 28        |
 +-----------+
 
+DAY
 
 9. WEEK() - Extract Week Number
 Description: Returns the week number of the year (1–53) from a DATE, DATETIME, or TIMESTAMP value.
@@ -161,7 +162,7 @@ Copy code
 Description: Subtracts a specified time interval from a date or time.
 SELECT DATE_SUB('2024-11-28', INTERVAL 10 DAY) AS new_date;
 
-Oput:
+Output:
 +------------+
 | new_date   |
 +------------+
@@ -531,6 +532,7 @@ FROM employee_attendance;
 
 
  
+
 Intermediate Level
 20 Questions — filtering, calculations and formatting
 Q1. Display employees who joined in the current year.
@@ -753,91 +755,61 @@ FROM employee_attendance;
  
 
 
+
+
 SET Operators
 -----------------
 Union : Combines results from two queries and removes duplicate rows. Columns must have the same number and type.
 
 Union All : Combines results from two queries and includes all rows, including duplicates. Columns must have the same number and type
 
-Intersect : Returns rows that are common to both queries. Columns must have the same number and type. Note: MySQL does not support INTERSECT directly.
-
-Minus : Returns rows from the first query that are not present in the second query. Columns must have the same number and type. Note: MySQL does not support MINUS directly.
-
-
+Intersect : Returns rows that are common to both queries. Columns must have the same number and type.
+EXCEPT: Returns rows from the first query that are not present in the second query. Columns must have the same number and type. 
  
--- Create the Course table
-CREATE TABLE Course (
-	course_id INT,
-    course_name VARCHAR(100),
-	instructor VARCHAR(100)
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    student_name VARCHAR(50),
+    course VARCHAR(50)
 );
- 
--- Insert sample data into Course table
-INSERT INTO Course (course_id, course_name, instructor) VALUES
-(1, 'Mathematics', 'Dr. Smith'),
-(2, 'Physics', 'Dr. Johnson'),
-(3, 'Chemistry', 'Dr. Brown'),
-(4, 'Biology', 'Dr. Lee'),
-(5, 'History', 'Dr. Martin');
- 
--- Create another table for SET operations
-CREATE TABLE Course_Completed (
-	course_id INT,
-	course_name VARCHAR(100),
-	instructor VARCHAR(100)
-); 
--- Insert sample data into Course_Completed table
-INSERT INTO Course_Completed (course_id, course_name, instructor) VALUES
-(2, 'Physics', 'Dr. Johnson'),
-(3, 'Chemistry', 'Dr. Brown'),
-(6, 'Computer Science', 'Dr. Walker'),
-(7, 'Art', 'Dr. Scott');
+
+INSERT INTO Students VALUES
+(101,'Rahul','Java Full Stack'),
+(102,'Priya','Python Full Stack'),
+(103,'Kiran','Data Science'),
+(104,'Sneha','Java Full Stack'),
+(105,'Ajay','Testing');
+
+
+CREATE TABLE Placed_Students (
+    student_id INT PRIMARY KEY,
+    student_name VARCHAR(50),
+    company_name VARCHAR(50)
+);
+INSERT INTO Placed_Students VALUES
+(103,'Kiran','TCS'),
+(104,'Sneha','Infosys'),
+(105,'Ajay','Wipro'),
+(106,'Pooja','Accenture'),
+(107,'Ramesh','Capgemini');
+
  
 -- UNION Examples
--- 1. Combine course names from both tables, removing duplicates
-SELECT course_name FROM Course
-UNION
-SELECT course_name FROM Course_Completed;
- 
--- 2. Combine instructor names from both tables, removing duplicates
-SELECT instructor FROM Course
-UNION
-SELECT instructor FROM Course_Completed;
+SELECT STUDENT_NAME FROM STUDENTS
+    UNION
+    SELECT STUDENT_NAME FROM PLACED_STUDENTS;
+
  
 -- UNION ALL Examples
--- 1. Combine course names from both tables, including duplicates
-SELECT course_name FROM Course
-UNION ALL
-SELECT course_name FROM Course_Completed;
- 
--- 2. Combine all records from both tables, including duplicates
-SELECT course_id, course_name, instructor FROM Course
-UNION ALL
-SELECT course_id, course_name, instructor FROM Course_Completed;
- 
--- INTERSECT Examples (Note: MySQL does not support INTERSECT natively)
--- Using INNER JOIN to achieve similar results
--- 1. Common course names
-SELECT DISTINCT c.course_name
-FROM Course c
-INNER JOIN Course_Completed cc ON c.course_name = cc.course_name;
- 
--- 2. Common instructors
-SELECT DISTINCT c.instructor
-FROM Course c
-INNER JOIN Course_Completed cc ON c.instructor = cc.instructor;
- 
--- MINUS Examples (Note: MySQL does not support MINUS natively)
--- Using LEFT JOIN to achieve similar results
--- 1. Courses in Course table but not in Course_Completed
-SELECT c.course_name
-FROM Course c
-LEFT JOIN Course_Completed cc ON c.course_id = cc.course_id
-WHERE cc.course_id IS NULL;
- 
--- 2. Courses in Course table but not in Course_Completed by course ID
-SELECT c.course_id
-FROM Course c
-LEFT JOIN Course_Completed cc ON c.course_id = cc.course_id
-WHERE cc.course_id IS NULL;
+SELECT STUDENT_NAME FROM STUDENTS
+    UNION ALL
+    SELECT STUDENT_NAME FROM PLACED_STUDENTS; 
+-- INTERSECT Examples 
+SELECT STUDENT_NAME FROM STUDENTS
+    INTERSECT
+    SELECT STUDENT_NAME FROM PLACED_STUDENTS; 
+-- MINUS Examples 
+SELECT STUDENT_NAME FROM STUDENTS
+   EXCEPT
+    SELECT STUDENT_NAME FROM PLACED_STUDENTS;
+
 
